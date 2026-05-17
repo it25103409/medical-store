@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Products | Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] } } } }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-slate-900 flex min-h-screen">
+
+<!-- Sidebar (Reused) -->
+<aside class="w-72 bg-slate-900 text-white flex flex-col fixed h-full z-50">
+    <div class="p-8 border-b border-slate-800 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-xl">✚</div>
+        <div>
+            <h1 class="font-bold text-lg tracking-tight">MediLux</h1>
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Admin Portal</p>
+        </div>
+    </div>
+    
+    <nav class="flex-1 p-6 space-y-2">
+        <a href="dashboard.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>📊</span> Dashboard
+        </a>
+        <a href="products.html" class="flex items-center gap-4 px-4 py-3 bg-emerald-500/10 text-emerald-400 rounded-xl font-semibold transition border border-emerald-500/20">
+            <span>💊</span> Products
+        </a>
+        <a href="orders.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>📦</span> Orders
+        </a>
+        <a href="customers.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>👤</span> Customers
+        </a>
+        <a href="messages.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>✉️</span> Messages
+        </a>
+    </nav>
+</aside>
+
+<main class="flex-1 ml-72 p-10">
+    
+    <header class="flex justify-between items-center mb-10">
+        <div>
+            <div class="flex items-center gap-4">
+                <h2 class="text-3xl font-extrabold">Product Inventory</h2>
+                <span id="productCount" class="px-4 py-1.5 bg-emerald-100 text-emerald-700 text-sm font-black rounded-full">0 Products</span>
+            </div>
+            <p class="text-slate-500 mt-1">Add, edit, or remove items from your store.</p>
+        </div>
+        <button onclick="toggleModal()" class="px-8 py-4 bg-emerald-500 text-white rounded-2xl font-bold shadow-lg shadow-emerald-500/30 hover:scale-105 transition">
+            + Add New Product
+        </button>
+    </header>
+
+    <div class="bg-gray-50 rounded-[2.5rem] p-8 shadow-sm border border-slate-100">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-slate-400 text-xs uppercase tracking-wider border-b border-slate-100">
+                        <th class="pb-4 px-4">Icon</th>
+                        <th class="pb-4 px-4">Name</th>
+                        <th class="pb-4 px-4">Category</th>
+                        <th class="pb-4 px-4">Price</th>
+                        <th class="pb-4 px-4">Stock</th>
+                        <th class="pb-4 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productTable" class="text-slate-700">
+                    <!-- Products will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<!-- Add Product Modal -->
+<div id="productModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-6">
+    <div class="bg-gray-50 w-full max-w-lg rounded-[3rem] p-10 animate-fade-up relative shadow-2xl">
+        <button onclick="toggleModal()" class="absolute top-6 right-8 text-slate-400 hover:text-slate-900 text-2xl font-light transition">✕</button>
+        <h3 class="text-2xl font-black mb-2 text-slate-900">Add New Product</h3>
+        <p class="text-sm text-slate-400 mb-8">Fill in the details to add a new item to inventory.</p>
+        
+        <div class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Product Name</label>
+                <input id="prodName" class="w-full bg-gray-100 border-2 border-transparent focus:border-emerald-400 rounded-2xl p-4 outline-none transition font-medium" placeholder="e.g. Paracetamol 500mg">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Category</label>
+                    <div class="relative">
+                        <select id="prodCat" class="w-full appearance-none bg-gray-100 border-2 border-transparent focus:border-emerald-400 rounded-2xl p-4 outline-none transition font-medium cursor-pointer pr-10">
+                            <option value="1">💊 Medicines</option>
+                            <option value="2">🧴 Vitamins</option>
+                            <option value="3">🍼 Baby Care</option>
+                            <option value="4">🧼 Personal Care</option>
+                        </select>
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">▼</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Price (Rs.)</label>
+                    <input id="prodPrice" type="number" min="0" class="w-full bg-gray-100 border-2 border-transparent focus:border-emerald-400 rounded-2xl p-4 outline-none transition font-medium" placeholder="500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Stock Qty</label>
+                    <input id="prodStock" type="number" min="0" class="w-full bg-gray-100 border-2 border-transparent focus:border-emerald-400 rounded-2xl p-4 outline-none transition font-medium" placeholder="100">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Image URL</label>
+                    <input id="prodIcon" class="w-full bg-gray-100 border-2 border-transparent focus:border-emerald-400 rounded-2xl p-4 outline-none transition font-medium" placeholder="https://...">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Description (Optional)</label>
+                <input id="prodDesc" class="w-full bg-gray-100 border-2 border-transparent focus:border-emerald-400 rounded-2xl p-4 outline-none transition font-medium" placeholder="Short description...">
+            </div>
+
+            <button onclick="saveProduct()" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-bold hover:bg-emerald-500 transition-all shadow-xl shadow-slate-900/20 text-base">
+                ➕ Add to Inventory
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleModal() {
+        const m = document.getElementById('productModal');
+        m.classList.toggle('hidden');
+    }
+
+    const catMap = {1: 'Medicines', 2: 'Vitamins', 3: 'Baby Care', 4: 'Personal Care'};
+
+    async function loadProducts() {
+        try {
+            const res = await fetch('/api/products');
+            const prods = await res.json();
+            const table = document.getElementById('productTable');
+
+            // Update count badge
+            document.getElementById('productCount').innerText = prods.length + ' Product' + (prods.length !== 1 ? 's' : '');
+
+            if (prods.length === 0) {
+                table.innerHTML = '<tr><td colspan="6" class="py-12 text-center text-slate-400 font-semibold">No products added yet.</td></tr>';
+                return;
+            }
+
+            table.innerHTML = prods.map(p => {
+                let displayIcon = (p.icon && (p.icon.startsWith('http') || p.icon.startsWith('data:image')))
+                    ? `<img src="${p.icon}" class="w-12 h-12 object-cover rounded-xl" alt="prod">`
+                    : `<span class="text-3xl">${p.icon || '\ud83d\udce6'}</span>`;
+
+                const stockBadge = p.stock === 0
+                    ? `<span class="px-2 py-1 bg-rose-100 text-rose-600 text-xs font-black rounded-full">Out of Stock</span>`
+                    : p.stock <= 5
+                    ? `<span class="px-2 py-1 bg-orange-100 text-orange-600 text-xs font-black rounded-full">${p.stock} left ⚠️</span>`
+                    : p.stock <= 10
+                    ? `<span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-black rounded-full">${p.stock} left</span>`
+                    : `<span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-black rounded-full">${p.stock} in stock</span>`;
+
+                return `
+                <tr class="border-t border-slate-100 hover:bg-gray-100/50 transition">
+                    <td class="py-4 px-4">${displayIcon}</td>
+                    <td class="py-4 px-4">
+                        <p class="font-bold text-slate-900">${p.name}</p>
+                        ${p.description ? `<p class="text-xs text-slate-400 mt-0.5">${p.description}</p>` : ''}
+                    </td>
+                    <td class="py-4 px-4 text-slate-500 text-sm font-semibold">${catMap[p.categoryId] || 'Other'}</td>
+                    <td class="py-4 px-4 font-extrabold text-emerald-600">Rs. ${p.price}</td>
+                    <td class="py-4 px-4">${stockBadge}</td>
+                    <td class="py-4 px-4 text-right">
+                        <button onclick="removeProduct(${p.id})" class="px-4 py-2 text-rose-500 font-bold hover:bg-rose-50 rounded-xl transition text-sm">Remove</button>
+                    </td>
+                </tr>`;
+            }).join('');
+        } catch(e) {
+            console.error('Error loading products:', e);
+        }
+    }
+
+    async function saveProduct() {
+        const name = document.getElementById('prodName').value.trim();
+        const catId = parseInt(document.getElementById('prodCat').value);
+        const price = document.getElementById('prodPrice').value;
+        const icon = document.getElementById('prodIcon').value.trim();
+        const stock = parseInt(document.getElementById('prodStock').value) || 100;
+        const desc = document.getElementById('prodDesc').value.trim();
+
+        if (!name || !price) return showToast('Please fill in the required fields', false);
+
+        try {
+            const res = await fetch('/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: name,
+                    categoryId: catId,
+                    price: parseFloat(price),
+                    icon: icon,
+                    stock: stock,
+                    description: desc
+                })
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text);
+            }
+
+            toggleModal();
+            loadProducts();
+
+            // clear inputs
+            ['prodName','prodPrice','prodIcon','prodStock','prodDesc'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            showToast('Product added successfully!');
+        } catch(e) {
+            showToast('Failed to save: ' + e.message, false);
+        }
+    }
+
+    async function removeProduct(id) {
+        if (!confirm("Are you sure you want to remove this product?")) return;
+        
+        try {
+            await fetch('/api/products/' + id, {
+                method: 'DELETE'
+            });
+            loadProducts();
+            showToast('Product removed!');
+        } catch(e) {
+            showToast('Failed to remove product.', false);
+        }
+    }
+
+    function showToast(message, isSuccess=true) {
+        const existing = document.getElementById('medilux-toast');
+        if(existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.id = 'medilux-toast';
+        toast.className = `fixed top-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-white font-bold transition-all duration-500 transform translate-y-[-100%] opacity-0 ${isSuccess ? 'bg-slate-900' : 'bg-rose-500'}`;
+        toast.innerHTML = `<span>${isSuccess ? '✅' : '❌'}</span><span>${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.classList.remove('translate-y-[-100%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }, 10);
+        setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-100%]', 'opacity-0'); setTimeout(() => toast.remove(), 500); }, 3000);
+    }
+
+    window.onload = loadProducts;
+</script>
+
+</body>
+</html>
+
