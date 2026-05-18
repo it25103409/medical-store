@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Orders | Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] } } } }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-slate-900 flex min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-72 bg-slate-900 text-white flex flex-col fixed h-full z-50">
+    <div class="p-8 border-b border-slate-800 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-xl">✚</div>
+        <div>
+            <h1 class="font-bold text-lg tracking-tight">MediLux</h1>
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Admin Portal</p>
+        </div>
+    </div>
+    
+    <nav class="flex-1 p-6 space-y-2">
+        <a href="dashboard.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>📊</span> Dashboard
+        </a>
+        <a href="products.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>💊</span> Products
+        </a>
+        <a href="orders.html" class="flex items-center gap-4 px-4 py-3 bg-emerald-500/10 text-emerald-400 rounded-xl font-semibold transition border border-emerald-500/20">
+            <span>📦</span> Orders
+        </a>
+        <a href="customers.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>👤</span> Customers
+        </a>
+        <a href="messages.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>✉️</span> Messages
+        </a>
+    </nav>
+</aside>
+
+<main class="flex-1 ml-72 p-10">
+    
+    <header class="flex justify-between items-center mb-10">
+        <div>
+            <h2 class="text-3xl font-extrabold">Order Management</h2>
+            <p class="text-slate-500 mt-1">Track and update the status of customer orders.</p>
+        </div>
+        <div class="flex gap-3">
+            <span class="px-4 py-2 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold font-mono">LIVE TRACKING</span>
+        </div>
+    </header>
+
+    <div class="bg-gray-50 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-gray-100/50 text-slate-400 text-xs uppercase tracking-widest font-bold">
+                    <th class="py-6 px-8">Order Detail</th>
+                    <th class="py-6 px-8">Customer</th>
+                    <th class="py-6 px-8">Date</th>
+                    <th class="py-6 px-8">Total</th>
+                    <th class="py-6 px-8">Status</th>
+                </tr>
+            </thead>
+            <tbody id="ordersBody" class="divide-y divide-slate-50">
+                <!-- Loaded from DB -->
+            </tbody>
+        </table>
+
+        <div id="noOrders" class="hidden text-center py-16">
+            <p class="text-slate-400 font-bold">No orders yet.</p>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    async function loadOrders() {
+        try {
+            const res = await fetch('/api/orders');
+            if(!res.ok) throw new Error('Failed');
+            const orders = await res.json();
+            const tbody = document.getElementById('ordersBody');
+
+            if(orders.length === 0) {
+                document.getElementById('noOrders').classList.remove('hidden');
+                return;
+            }
+
+            tbody.innerHTML = orders.map(o => {
+                // Parse items to show summary
+                let itemSummary = '';
+                try {
+                    const items = JSON.parse(o.items);
+                    itemSummary = items.length + ' Item' + (items.length > 1 ? 's' : '') + ' • ' + items.map(i => i.name).join(', ');
+                    if(itemSummary.length > 50) itemSummary = itemSummary.substring(0, 47) + '...';
+                } catch(e) { itemSummary = 'Items'; }
+
+                // Date format
+                let dateStr = o.orderDate ? o.orderDate.substring(0, 10) : '';
+
+                // Status colors
+                const statusColors = {
+                    pending: 'bg-amber-50 text-amber-600',
+                    shipped: 'bg-blue-50 text-blue-600',
+                    delivered: 'bg-emerald-50 text-emerald-600',
+                    cancelled: 'bg-rose-50 text-rose-600'
+                };
+                const currentColor = statusColors[o.status] || statusColors.pending;
+
+                // Get user initials (we'll use order user_id)
+                const initials = 'U' + o.userId;
+
+                return `
+                <tr class="hover:bg-gray-100/50 transition duration-300">
+                    <td class="py-8 px-8">
+                        <p class="font-mono text-sm font-black text-slate-900">${o.orderId}</p>
+                        <p class="text-xs text-slate-400 mt-1">${itemSummary}</p>
+                    </td>
+                    <td class="py-8 px-8">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">${initials}</div>
+                            <div>
+                                <span class="font-bold text-slate-700 block">User #${o.userId}</span>
+                                <span class="text-xs text-slate-500 mt-1 block max-w-[200px] leading-snug">📍 ${o.address || 'No address provided'}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-8 px-8 text-sm text-slate-500 font-medium">${dateStr}</td>
+                    <td class="py-8 px-8 font-extrabold text-slate-900">Rs. ${o.total}</td>
+                    <td class="py-8 px-8">
+                        <select onchange="updateStatus('${o.orderId}', this.value, this)" class="${currentColor} px-4 py-2.5 rounded-2xl text-xs font-bold border-none ring-0 appearance-none cursor-pointer hover:opacity-80 transition">
+                            <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>PENDING</option>
+                            <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>SHIPPED</option>
+                            <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>DELIVERED</option>
+                            <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>CANCELLED</option>
+                        </select>
+                    </td>
+                </tr>`;
+            }).join('');
+
+        } catch(e) {
+            console.error(e);
+            document.getElementById('noOrders').classList.remove('hidden');
+            document.getElementById('noOrders').innerHTML = '<p class="text-rose-500 font-bold py-16">Failed to load orders from server.</p>';
+        }
+    }
+
+    async function updateStatus(orderId, status, selectEl) {
+        try {
+            const res = await fetch('/api/orders/' + encodeURIComponent(orderId) + '/status', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: status })
+            });
+
+            if(res.ok) {
+                loadOrders();
+                showToast('Status updated successfully!');
+            } else {
+                showToast('Failed to update status', false);
+            }
+        } catch(e) {
+            showToast('Error: ' + e.message, false);
+        }
+    }
+
+    function showToast(message, isSuccess=true) {
+        const existing = document.getElementById('medilux-toast');
+        if(existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.id = 'medilux-toast';
+        toast.className = `fixed top-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-white font-bold transition-all duration-500 transform translate-y-[-100%] opacity-0 ${isSuccess ? 'bg-slate-900' : 'bg-rose-500'}`;
+        toast.innerHTML = `<span>${isSuccess ? '✅' : '❌'}</span><span>${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.classList.remove('translate-y-[-100%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }, 10);
+        setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-100%]', 'opacity-0'); setTimeout(() => toast.remove(), 500); }, 3000);
+    }
+
+    window.onload = loadOrders;
+</script>
+
+</body>
+</html>
+
