@@ -54,7 +54,6 @@ public class OrderController {
 
             orderRepository.save(order);
 
-            // Stock reduce
             try {
                 JSONArray items = new JSONArray(itemsJson);
                 for (int i = 0; i < items.length(); i++) {
@@ -118,74 +117,6 @@ public class OrderController {
     public ResponseEntity<?> getOrdersByStatus(@PathVariable String status) {
         try {
             return ResponseEntity.ok(orderRepository.findByStatusOrderByIdDesc(status));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity<?> updateStatus(@PathVariable String orderId, @RequestBody Map<String, String> body) {
-        try {
-            Order order = orderRepository.findByOrderId(orderId);
-            if (order != null) {
-                order.setStatus(body.get("status"));
-                orderRepository.save(order);
-                return ResponseEntity.ok(Map.of("message", "Order status updated successfully"));
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order not found or update failed");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PutMapping("/{orderId}/address")
-    public ResponseEntity<?> updateAddress(@PathVariable String orderId, @RequestBody Map<String, Object> body) {
-        try {
-            int userId = Integer.parseInt(body.get("userId").toString());
-            String newAddress = (String) body.get("address");
-
-            Order order = orderRepository.findByOrderId(orderId);
-            if (order != null && order.getUserId() == userId && "pending".equals(order.getStatus())) {
-                order.setAddress(newAddress);
-                orderRepository.save(order);
-                return ResponseEntity.ok(Map.of("message", "Delivery address updated successfully"));
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot update — order not found, not yours, or not pending");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<?> cancelOrder(@PathVariable String orderId, @RequestBody Map<String, Object> body) {
-        try {
-            int userId = Integer.parseInt(body.get("userId").toString());
-            Order order = orderRepository.findByOrderId(orderId);
-            if (order != null && order.getUserId() == userId && "pending".equals(order.getStatus())) {
-                order.setStatus("cancelled");
-                orderRepository.save(order);
-                return ResponseEntity.ok(Map.of("message", "Order cancelled successfully"));
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot cancel — order not found, not yours, or already processed");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/{orderId}")
-    @Transactional
-    public ResponseEntity<?> deleteOrder(@PathVariable String orderId) {
-        try {
-            Order order = orderRepository.findByOrderId(orderId);
-            if (order != null) {
-                orderRepository.deleteByOrderId(orderId);
-                return ResponseEntity.ok(Map.of("message", "Order deleted successfully"));
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
