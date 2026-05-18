@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us | MediLux Pharmacy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] }, animation: { 'fade-up': 'fadeUp 0.8s ease forwards' }, keyframes: { fadeUp: { '0%': {opacity:'0', transform:'translateY(20px)'}, '100%': {opacity:'1', transform:'translateY(0px)'} } } } } }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-slate-900">
+
+<!-- Navbar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-gray-50/80 backdrop-blur-xl border-b border-slate-200">
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<div class="h-20 flex items-center justify-between">
+<a href="index.html" class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold">✚</div>
+<div><h1 class="font-extrabold text-xl">MediLux</h1></div>
+</a>
+<nav class="hidden lg:flex gap-10 text-sm font-medium text-slate-600">
+<a href="index.html" class="hover:text-emerald-600">Home</a>
+<a href="products.html" class="hover:text-emerald-600 transition">Products</a>
+<a href="track-order.html" class="hover:text-emerald-600 transition">Track Order</a>
+<a href="about.html" class="hover:text-emerald-600 transition">About</a>
+<a href="contact.html" class="text-emerald-600 font-bold transition">Contact</a>
+</nav>
+<button class="px-5 py-2.5 rounded-full bg-emerald-500 text-white text-sm font-semibold">Support</button>
+</div>
+</div>
+</header>
+
+<!-- Hero Banner -->
+<section class="pt-20 pb-0 bg-gray-50 relative">
+    <div class="w-full h-[350px] relative overflow-hidden">
+        <img src="images/contact_banner.png" class="absolute inset-0 w-full h-full object-cover scale-105" alt="Contact Us">
+        <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/90 via-emerald-900/60 to-transparent"></div>
+        <div class="absolute inset-0 flex items-center">
+            <div class="max-w-7xl mx-auto px-6 lg:px-10 w-full">
+                <div class="animate-fade-up max-w-xl">
+                    <span class="inline-flex px-3 py-1 rounded-full bg-gray-50/20 text-white text-xs font-bold uppercase tracking-widest mb-4 border border-white/30">24/7 Support</span>
+                    <h2 class="text-4xl lg:text-6xl font-black text-white tracking-tight leading-tight">We're Here <br><span class="text-emerald-300">To Help You</span></h2>
+                    <p class="mt-4 text-emerald-50 text-lg">Reach out to our professional support team for guidance, prescription queries, or general health advice.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pt-20 pb-24 bg-gray-100">
+<div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-16 items-start animate-fade-up">
+        
+        <div>
+            <h2 class="text-4xl font-extrabold leading-tight text-slate-900">Get in Touch with our <span class="text-emerald-500">Experts</span></h2>
+            <p class="mt-6 text-lg text-slate-500 leading-8">Have questions about your prescription or wellness items? Our team is here to help you 24/7.</p>
+            
+            <div class="mt-10 space-y-6">
+                <div class="flex items-center gap-6">
+                    <div class="w-14 h-14 bg-gray-50 rounded-2xl shadow-lg flex items-center justify-center text-2xl">📞</div>
+                    <div>
+                        <p class="text-sm text-slate-500">Phone Support</p>
+                        <p class="font-bold text-lg">+94 11 234 5678</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="w-14 h-14 bg-gray-50 rounded-2xl shadow-lg flex items-center justify-center text-2xl">📍</div>
+                    <div>
+                        <p class="text-sm text-slate-500">Visit Us</p>
+                        <p class="font-bold text-lg">123 Health Ave, Colombo 07</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-[2.5rem] p-10 shadow-2xl border border-slate-100">
+            <h3 class="text-2xl font-bold mb-8">Send a Message</h3>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name</label>
+                    <input id="contactName" class="w-full bg-gray-100 border border-slate-200 rounded-2xl p-4 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition" placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
+                    <input id="contactEmail" type="email" class="w-full bg-gray-100 border border-slate-200 rounded-2xl p-4 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition" placeholder="john@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Message</label>
+                    <textarea id="contactMessage" class="w-full bg-gray-100 border border-slate-200 rounded-2xl p-4 h-32 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition resize-none" placeholder="How can we help?"></textarea>
+                </div>
+                <button onclick="sendMessage()" class="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-lg shadow-emerald-500/30">
+                    Send Message
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+</section>
+
+<script>
+async function sendMessage() {
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const msg = document.getElementById('contactMessage').value.trim();
+
+    if(!name || !email || !msg) {
+        showToast('Please fill out all fields before sending.', false);
+        return;
+    }
+
+    if(!email.includes('@') || !email.includes('.')) {
+        showToast('Please enter a valid email address.', false);
+        return;
+    }
+
+    const btn = document.querySelector('button[onclick="sendMessage()"]');
+    const originalText = btn.innerText;
+    btn.innerText = 'Sending...';
+    btn.disabled = true;
+    btn.classList.add('opacity-70', 'cursor-not-allowed');
+
+    try {
+        const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, email: email, message: msg })
+        });
+
+        if (res.ok) {
+            showToast('Thank you, ' + name + '! Your message has been saved. We will get back to you shortly.');
+            
+            // Clear fields
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactEmail').value = '';
+            document.getElementById('contactMessage').value = '';
+        } else {
+            showToast('Failed to send message. Please try again later.', false);
+        }
+    } catch(e) {
+        showToast('Error: ' + e.message, false);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+        btn.classList.remove('opacity-70', 'cursor-not-allowed');
+    }
+}
+
+    function showToast(message, isSuccess=true) {
+        const existing = document.getElementById('medilux-toast');
+        if(existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.id = 'medilux-toast';
+        toast.className = `fixed top-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-white font-bold transition-all duration-500 transform translate-y-[-100%] opacity-0 ${isSuccess ? 'bg-slate-900' : 'bg-rose-500'}`;
+        toast.innerHTML = `<span>${isSuccess ? '✅' : '❌'}</span><span>${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.classList.remove('translate-y-[-100%]', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); }, 10);
+        setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-[-100%]', 'opacity-0'); setTimeout(() => toast.remove(), 500); }, 3000);
+    }
+</script>
+
+</body>
+</html>
