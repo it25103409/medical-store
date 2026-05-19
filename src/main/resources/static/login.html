@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | MediLux Pharmacy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] }, animation: { 'fade-up': 'fadeUp 0.8s ease forwards', 'float': 'float 3s ease-in-out infinite' }, keyframes: { fadeUp: { '0%': {opacity:'0', transform:'translateY(20px)'}, '100%': {opacity:'1', transform:'translateY(0px)'} }, float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } } } } } }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-slate-900 flex min-h-screen">
+
+    <!-- Left side: Image -->
+    <div class="hidden lg:block lg:w-1/2 relative bg-slate-900 overflow-hidden">
+        <img src="images/auth_pharmacy.png" class="absolute inset-0 w-full h-full object-cover opacity-60 hover:scale-105 transition duration-[2s]" alt="Pharmacy">
+        <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-transparent to-transparent"></div>
+        <div class="absolute bottom-16 left-16 right-16 z-10">
+            <div class="w-16 h-16 rounded-[2rem] bg-emerald-500 text-white flex items-center justify-center text-3xl font-bold mb-8 shadow-2xl shadow-emerald-500/40">✚</div>
+            <h2 class="text-5xl font-black text-white leading-tight">Welcome to <br><span class="text-emerald-400">MediLux</span></h2>
+            <p class="text-emerald-50 mt-6 text-lg font-medium leading-relaxed max-w-md">Experience seamless healthcare delivery, premium wellness products, and expert guidance directly to your door.</p>
+        </div>
+    </div>
+
+    <!-- Right side: Form -->
+    <div class="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 lg:p-16">
+        
+        <div class="max-w-md w-full animate-fade-up">
+        
+        <!-- Logo -->
+        <div class="flex flex-col items-center mb-10 group">
+            <div class="w-16 h-16 rounded-[2rem] bg-emerald-500 text-white flex items-center justify-center text-3xl font-bold shadow-2xl shadow-emerald-500/40 animate-float group-hover:scale-110 transition duration-500">
+                ✚
+            </div>
+            <h1 class="mt-6 text-3xl font-black tracking-tight">Welcome Back</h1>
+            <p class="text-slate-500 mt-2 font-medium">Log in to your MediLux account</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-gray-50 rounded-[3rem] p-10 shadow-2xl shadow-slate-200/60 border border-white">
+            <form onsubmit="return handleLogin(event)" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
+                    <div class="relative">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400">📧</span>
+                        <input id="emailField" type="email" required class="w-full bg-gray-100 border-none rounded-2xl py-4 pl-14 pr-6 focus:ring-2 focus:ring-emerald-500 transition font-medium" placeholder="name@example.com">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-sm font-bold text-slate-700">Password</label>
+                        <a href="#" class="text-xs font-bold text-emerald-600 hover:underline">Forgot?</a>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400">🔒</span>
+                        <input id="passwordField" type="password" required class="w-full bg-gray-100 border-none rounded-2xl py-4 pl-14 pr-6 focus:ring-2 focus:ring-emerald-500 transition font-medium" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="remember" class="w-5 h-5 rounded-lg border-slate-300 text-emerald-500 focus:ring-emerald-500">
+                    <label for="remember" class="text-sm font-bold text-slate-500">Remember me</label>
+                </div>
+
+                <button type="submit" class="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-bold text-lg hover:bg-emerald-600 transition shadow-2xl shadow-slate-900/10 hover:scale-[1.02] active:scale-95 duration-300">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-8 pt-8 border-t border-slate-50 text-center">
+                <p class="text-slate-500 text-sm font-medium">Don't have an account? <a href="register.html" class="text-emerald-600 font-bold hover:underline">Create one</a></p>
+            </div>
+        </div>
+
+        <!-- Admin Access Link -->
+        <div class="mt-10 text-center">
+            <a href="admin/dashboard.html" class="inline-flex items-center gap-2 px-6 py-3 bg-white/50 border border-white rounded-full text-slate-500 text-sm font-bold hover:bg-gray-50 hover:text-emerald-600 transition shadow-sm">
+                <span>🛡️</span> Access Admin Portal
+            </a>
+        </div>
+
+        </div>
+    </div>
+
+<script>
+    async function handleLogin(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('emailField').value;
+        const password = document.getElementById('passwordField').value;
+        
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+            
+            if (res.ok) {
+                const user = await res.json();
+                localStorage.setItem('medilux_user', JSON.stringify(user));
+                showToast(`Welcome back, ${user.name}! 👋`);
+                setTimeout(() => {
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin/dashboard.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                }, 1500);
+            } else {
+                showToast("Invalid email or password!", false);
+            }
+        } catch(err) {
+            showToast("Error connecting to server!", false);
+        }
+        return false;
+    }
+
+    function showToast(message, isSuccess=true) {
+        const existing = document.getElementById('medilux-toast');
+        if(existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'medilux-toast';
+        toast.className = `fixed top-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-white font-bold transition-all duration-500 transform translate-y-[-100%] opacity-0 ${isSuccess ? 'bg-slate-900' : 'bg-rose-500'}`;
+        toast.innerHTML = `<span>${isSuccess ? '✅' : '❌'}</span><span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.remove('translate-y-[-100%]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-[-100%]', 'opacity-0');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>
+
