@@ -1,0 +1,7 @@
+http://localhost/phpmyadmin/index.php?route=/database/structure&db=medilux_db
+
+
+http://localhost:8081/index.html
+
+
+http://localhost:8081/admin/products.html

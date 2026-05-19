@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customers | Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] } } } }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-slate-900 flex min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-72 bg-slate-900 text-white flex flex-col fixed h-full z-50">
+    <div class="p-8 border-b border-slate-800 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-xl">✚</div>
+        <div>
+            <h1 class="font-bold text-lg tracking-tight">MediLux</h1>
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Admin Portal</p>
+        </div>
+    </div>
+    
+    <nav class="flex-1 p-6 space-y-2">
+        <a href="dashboard.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>📊</span> Dashboard
+        </a>
+        <a href="products.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>💊</span> Products
+        </a>
+        <a href="orders.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>📦</span> Orders
+        </a>
+        <a href="customers.html" class="flex items-center gap-4 px-4 py-3 bg-emerald-500/10 text-emerald-400 rounded-xl font-semibold transition border border-emerald-500/20">
+            <span>👤</span> Customers
+        </a>
+        <a href="messages.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>✉️</span> Messages
+        </a>
+    </nav>
+</aside>
+
+<main class="flex-1 ml-72 p-10">
+    
+    <header class="flex justify-between items-center mb-10">
+        <div>
+            <h2 class="text-3xl font-extrabold">Customer Directory</h2>
+            <p class="text-slate-500 mt-1">Manage your pharmacy's registered customers.</p>
+        </div>
+        <div class="flex gap-4">
+             <input class="bg-gray-50 border border-slate-200 px-6 py-3 rounded-2xl text-sm w-64 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Search customers...">
+        </div>
+    </header>
+
+    <div class="bg-gray-50 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-gray-100/50 text-slate-400 text-xs uppercase tracking-widest font-bold">
+                    <th class="py-6 px-8">Customer</th>
+                    <th class="py-6 px-8">Contact</th>
+                    <th class="py-6 px-8">Orders</th>
+                    <th class="py-6 px-8">Total Spent</th>
+                    <th class="py-6 px-8">Status</th>
+                </tr>
+            </thead>
+            <tbody id="customersBody" class="divide-y divide-slate-50">
+                <!-- Loaded via JS -->
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<script>
+    async function loadCustomers() {
+        try {
+            const [usersRes, ordersRes] = await Promise.all([
+                fetch('/api/auth/users'),
+                fetch('/api/orders')
+            ]);
+            
+            if(!usersRes.ok || !ordersRes.ok) throw new Error('Failed to fetch data');
+            
+            const users = await usersRes.json();
+            const orders = await ordersRes.json();
+            
+            // Only show customers
+            const customers = users.filter(u => u.role === 'customer');
+            const tbody = document.getElementById('customersBody');
+            
+            if(customers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-slate-500">No customers found.</td></tr>';
+                return;
+            }
+            
+            const colors = ['bg-indigo-100 text-indigo-600', 'bg-rose-100 text-rose-600', 'bg-emerald-100 text-emerald-600', 'bg-amber-100 text-amber-600', 'bg-blue-100 text-blue-600'];
+            
+            tbody.innerHTML = customers.map((c, index) => {
+                const userOrders = orders.filter(o => o.userId === c.id);
+                const totalSpent = userOrders.reduce((sum, o) => sum + parseFloat(o.total), 0);
+                
+                // Get initials
+                const initials = c.name ? c.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'CU';
+                const colorClass = colors[index % colors.length];
+                
+                return `
+                <tr class="hover:bg-gray-100/50 transition duration-300">
+                    <td class="py-8 px-8">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl ${colorClass} flex items-center justify-center font-bold">${initials}</div>
+                            <div>
+                                <p class="font-bold text-slate-900">${c.name || 'Unknown'}</p>
+                                <p class="text-xs text-slate-400">ID: #C-${1000 + c.id}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-8 px-8">
+                        <p class="text-sm font-medium text-slate-700">${c.email || 'N/A'}</p>
+                        <p class="text-xs text-slate-400">-</p>
+                    </td>
+                    <td class="py-8 px-8 font-bold text-slate-700">${userOrders.length} Orders</td>
+                    <td class="py-8 px-8 font-black text-emerald-600">Rs. ${totalSpent.toLocaleString()}</td>
+                    <td class="py-8 px-8">
+                        <span class="px-4 py-1.5 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold">ACTIVE</span>
+                    </td>
+                </tr>`;
+            }).join('');
+            
+        } catch(e) {
+            console.error('Error loading customers:', e);
+            document.getElementById('customersBody').innerHTML = '<tr><td colspan="5" class="py-8 text-center text-rose-500">Error loading customer data.</td></tr>';
+        }
+    }
+
+    window.onload = loadCustomers;
+</script>
+
+</body>
+</html>
+

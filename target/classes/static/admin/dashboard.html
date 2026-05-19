@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | MediLux</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'] },
+      colors: {
+        admin: {
+          sidebar: '#0f172a',
+          accent: '#10b981',
+          bg: '#f8fafc'
+        }
+      }
+    }
+  }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-admin-bg text-slate-900 flex min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-72 bg-slate-900 text-white flex flex-col fixed h-full z-50">
+    <div class="p-8 border-b border-slate-800 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-xl">✚</div>
+        <div>
+            <h1 class="font-bold text-lg tracking-tight">MediLux</h1>
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Admin Portal</p>
+        </div>
+    </div>
+    
+    <nav class="flex-1 p-6 space-y-2">
+        <a href="dashboard.html" class="flex items-center gap-4 px-4 py-3 bg-emerald-500/10 text-emerald-400 rounded-xl font-semibold transition border border-emerald-500/20">
+            <span>📊</span> Dashboard
+        </a>
+        <a href="products.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>💊</span> Products
+        </a>
+        <a href="orders.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>📦</span> Orders
+        </a>
+        <a href="customers.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>👤</span> Customers
+        </a>
+        <a href="messages.html" class="flex items-center gap-4 px-4 py-3 text-slate-400 hover:bg-slate-800 hover:text-white rounded-xl font-medium transition">
+            <span>✉️</span> Messages
+        </a>
+    </nav>
+
+    <div class="p-6 border-t border-slate-800">
+        <a href="../index.html" class="flex items-center gap-4 px-4 py-3 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium transition">
+            <span>🚪</span> Go to Website
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 ml-72 p-10">
+    
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-10">
+        <div>
+            <h2 class="text-3xl font-extrabold text-slate-900">Dashboard Overview</h2>
+            <p class="text-slate-500 mt-1">Welcome back, Admin. Here's what's happening today.</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="bg-gray-50 p-3 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">🔔</div>
+                <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold">A</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="bg-gray-50 p-8 rounded-[2rem] shadow-sm border border-slate-100">
+            <p class="text-slate-500 text-sm font-semibold">Total Revenue</p>
+            <h3 id="totalRevenue" class="text-3xl font-black mt-2">Rs. 0</h3>
+            <span class="text-xs text-emerald-500 font-bold mt-2 inline-block">From all orders</span>
+        </div>
+        <div class="bg-gray-50 p-8 rounded-[2rem] shadow-sm border border-slate-100">
+            <p class="text-slate-500 text-sm font-semibold">Total Orders</p>
+            <h3 id="totalOrders" class="text-3xl font-black mt-2">0</h3>
+            <span id="pendingCount" class="text-xs text-amber-500 font-bold mt-2 inline-block">0 pending</span>
+        </div>
+        <div class="bg-gray-50 p-8 rounded-[2rem] shadow-sm border border-slate-100">
+            <p class="text-slate-500 text-sm font-semibold">Total Products</p>
+            <h3 id="totalProducts" class="text-3xl font-black mt-2">0</h3>
+            <span class="text-xs text-slate-400 font-bold mt-2 inline-block">4 categories</span>
+        </div>
+        <div class="bg-gray-50 p-8 rounded-[2rem] shadow-sm border border-slate-100">
+            <p class="text-slate-500 text-sm font-semibold">Customers</p>
+            <h3 id="totalCustomers" class="text-3xl font-black mt-2">0</h3>
+            <span class="text-xs text-emerald-500 font-bold mt-2 inline-block">Registered users</span>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="grid lg:grid-cols-3 gap-8">
+        
+        <!-- Recent Orders -->
+        <div class="lg:col-span-2 bg-gray-50 rounded-[2.5rem] p-8 shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-xl font-bold">Recent Orders</h3>
+                <a href="orders.html" class="text-emerald-600 font-bold text-sm hover:underline">View All</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-slate-400 text-sm uppercase tracking-wider">
+                            <th class="pb-4 font-semibold">Order ID</th>
+                            <th class="pb-4 font-semibold">Items</th>
+                            <th class="pb-4 font-semibold">Status</th>
+                            <th class="pb-4 font-semibold">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentOrdersBody" class="text-slate-700">
+                        <!-- Loaded from DB -->
+                    </tbody>
+                </table>
+                <p id="noRecentOrders" class="hidden text-center text-slate-400 py-8 font-medium">No orders yet.</p>
+            </div>
+        </div>
+
+        <!-- Sales Chart -->
+        <div class="bg-gray-50 rounded-[2.5rem] p-8 shadow-sm border border-slate-100">
+            <h3 class="text-xl font-bold mb-8">Order Status</h3>
+            <div id="statusChart" class="space-y-6">
+                <!-- Loaded from DB -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Low Stock Alert Panel -->
+    <div class="mt-8 bg-gray-50 rounded-[2.5rem] p-8 shadow-sm border border-rose-100">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-rose-100 rounded-2xl flex items-center justify-center text-xl">⚠️</div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Low Stock Alert</h3>
+                    <p class="text-xs text-slate-400 font-medium">Products with stock ≤ 10 units</p>
+                </div>
+            </div>
+            <a href="products.html" class="text-sm font-bold text-emerald-600 hover:underline">Manage Products →</a>
+        </div>
+        <div id="lowStockGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <p class="text-slate-400 text-sm col-span-4 text-center py-6">Checking inventory...</p>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    async function loadDashboard() {
+        try {
+            // Fetch all data in parallel
+            const [ordersRes, productsRes] = await Promise.all([
+                fetch('/api/orders'),
+                fetch('/api/products')
+            ]);
+
+            // Orders
+            let orders = [];
+            if(ordersRes.ok) orders = await ordersRes.json();
+
+            // Products count
+            let products = [];
+            if(productsRes.ok) products = await productsRes.json();
+
+            // Stats
+            const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.total), 0);
+            const pendingOrders = orders.filter(o => o.status === 'pending').length;
+            const shippedOrders = orders.filter(o => o.status === 'shipped').length;
+            const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
+
+            document.getElementById('totalRevenue').innerText = 'Rs. ' + totalRevenue.toLocaleString();
+            document.getElementById('totalOrders').innerText = orders.length;
+            document.getElementById('pendingCount').innerText = pendingOrders + ' pending';
+            document.getElementById('totalProducts').innerText = products.length;
+
+            // Count unique users from orders
+            const userIds = [...new Set(orders.map(o => o.userId))];
+            document.getElementById('totalCustomers').innerText = userIds.length;
+
+            // Recent Orders (last 5)
+            const recent = orders.slice(0, 5);
+            const tbody = document.getElementById('recentOrdersBody');
+            if(recent.length === 0) {
+                document.getElementById('noRecentOrders').classList.remove('hidden');
+            } else {
+                tbody.innerHTML = recent.map(o => {
+                    let itemNames = '';
+                    try {
+                        const items = JSON.parse(o.items);
+                        itemNames = items.map(i => i.name).join(', ');
+                        if(itemNames.length > 30) itemNames = itemNames.substring(0, 27) + '...';
+                    } catch(e) { itemNames = '-'; }
+
+                    const statusColors = {
+                        pending: 'bg-amber-100 text-amber-600',
+                        shipped: 'bg-blue-100 text-blue-600',
+                        delivered: 'bg-emerald-100 text-emerald-600',
+                        cancelled: 'bg-rose-100 text-rose-600'
+                    };
+                    const color = statusColors[o.status] || statusColors.pending;
+
+                    return `
+                    <tr class="border-t border-slate-50">
+                        <td class="py-4 font-mono text-sm font-bold">${o.orderId}</td>
+                        <td class="py-4 text-sm">${itemNames}</td>
+                        <td class="py-4"><span class="px-3 py-1 ${color} rounded-full text-xs font-bold">${o.status.charAt(0).toUpperCase() + o.status.slice(1)}</span></td>
+                        <td class="py-4 font-bold">Rs. ${o.total}</td>
+                    </tr>`;
+                }).join('');
+            }
+
+            // Status Chart
+            const total = orders.length || 1;
+            const pPct = Math.round((pendingOrders / total) * 100);
+            const sPct = Math.round((shippedOrders / total) * 100);
+            const dPct = Math.round((deliveredOrders / total) * 100);
+
+            document.getElementById('statusChart').innerHTML = `
+                <div>
+                    <div class="flex justify-between text-sm font-bold mb-2">
+                        <span>Pending</span>
+                        <span>${pPct}% (${pendingOrders})</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-500 rounded-full" style="width: ${pPct}%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm font-bold mb-2">
+                        <span>Shipped</span>
+                        <span>${sPct}% (${shippedOrders})</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: ${sPct}%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-sm font-bold mb-2">
+                        <span>Delivered</span>
+                        <span>${dPct}% (${deliveredOrders})</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: ${dPct}%"></div>
+                    </div>
+                </div>
+            `;
+
+            // Load Low Stock
+            loadLowStock();
+
+        } catch(e) {
+            console.error('Dashboard load error:', e);
+        }
+    }
+
+    async function loadLowStock() {
+        try {
+            const res = await fetch('/api/products/low-stock?threshold=10');
+            const items = await res.json();
+            const grid = document.getElementById('lowStockGrid');
+            if (!items || items.length === 0) {
+                grid.innerHTML = '<p class="text-emerald-600 font-bold col-span-4 text-center py-6">✅ All products are well stocked!</p>';
+                return;
+            }
+            grid.innerHTML = items.map(p => {
+                const stockColor = p.stock === 0 ? 'bg-rose-100 text-rose-600 border-rose-200'
+                    : p.stock <= 5 ? 'bg-orange-100 text-orange-600 border-orange-200'
+                    : 'bg-amber-50 text-amber-600 border-amber-200';
+                const badge = p.stock === 0 ? 'Out of Stock' : p.stock + ' left';
+                return `
+                <div class="bg-gray-100 border ${stockColor.split(' ')[2]} rounded-3xl p-5 flex flex-col gap-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <p class="font-bold text-slate-900 text-sm leading-snug">${p.name}</p>
+                            <p class="text-xs text-slate-400 mt-0.5">ID #${p.id}</p>
+                        </div>
+                        <span class="px-2 py-1 rounded-full text-xs font-black ${stockColor} border whitespace-nowrap">${badge}</span>
+                    </div>
+                    <button onclick="restockPrompt(${p.id}, '${p.name.replace(/'/g,'&apos;')}')" 
+                        class="w-full py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-emerald-500 transition">
+                        + Restock
+                    </button>
+                </div>`;
+            }).join('');
+        } catch(e) {
+            document.getElementById('lowStockGrid').innerHTML = '<p class="text-rose-400 text-sm col-span-4 text-center py-4">Failed to load stock data.</p>';
+        }
+    }
+
+    async function restockPrompt(productId, name) {
+        const qty = prompt(`How many units to add to "${name}"?`);
+        if (!qty || isNaN(qty) || parseInt(qty) <= 0) return;
+        try {
+            // We use negative quantity to ADD stock (since updateStock subtracts)
+            const res = await fetch(`/api/products/${productId}/stock`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ quantity: -parseInt(qty) })
+            });
+            if (res.ok) {
+                alert(`✅ Added ${qty} units to "${name}".`);
+                loadLowStock();
+            } else {
+                alert('Failed to restock.');
+            }
+        } catch(e) {
+            alert('Error: ' + e.message);
+        }
+    }
+
+    window.onload = loadDashboard;
+</script>
+
+</body>
+</html>
+

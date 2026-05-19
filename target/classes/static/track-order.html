@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Order | MediLux Pharmacy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] }, animation: { 'fade-up': 'fadeUp 0.8s ease forwards' }, keyframes: { fadeUp: { '0%': {opacity:'0', transform:'translateY(20px)'}, '100%': {opacity:'1', transform:'translateY(0px)'} } } } } }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-slate-900">
+
+<!-- Navbar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-gray-50/80 backdrop-blur-xl border-b border-slate-200">
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<div class="h-20 flex items-center justify-between">
+  <a href="index.html" class="flex items-center gap-3">
+    <div class="w-11 h-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold">✚</div>
+    <div><h1 class="font-extrabold text-xl">MediLux</h1></div>
+  </a>
+  <nav class="hidden lg:flex gap-10 text-sm font-medium text-slate-600">
+    <a href="index.html" class="hover:text-emerald-600 transition">Home</a>
+    <a href="products.html" class="hover:text-emerald-600 transition">Products</a>
+    <a href="track-order.html" class="text-emerald-600 font-bold transition">Track Order</a>
+    <a href="about.html" class="hover:text-emerald-600 transition">About</a>
+    <a href="contact.html" class="hover:text-emerald-600 transition">Contact</a>
+  </nav>
+  <div class="flex items-center gap-5">
+    <a href="cart.html" class="relative hover:scale-110 transition">
+      <span class="text-2xl">🛒</span>
+      <span id="cartBadge" class="hidden absolute -top-2 -right-2 w-5 h-5 bg-emerald-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold">0</span>
+    </a>
+    <a id="authBtn" href="login.html" class="hidden md:block px-5 py-2.5 rounded-full border border-slate-300 hover:bg-slate-100 transition text-sm font-semibold">Login</a>
+  </div>
+</div>
+</div>
+</header>
+
+<!-- Hero Banner -->
+<section class="pt-20 pb-0 bg-gray-50 relative">
+  <div class="w-full h-[320px] relative overflow-hidden">
+    <img src="images/track_banner.png" class="absolute inset-0 w-full h-full object-cover scale-105" alt="Track Delivery">
+    <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/90 via-emerald-900/50 to-transparent"></div>
+    <div class="absolute inset-0 flex items-center">
+      <div class="max-w-7xl mx-auto px-6 lg:px-10 w-full">
+        <div class="animate-fade-up max-w-xl">
+          <span class="inline-flex px-3 py-1 rounded-full bg-gray-50/20 text-white text-xs font-bold uppercase tracking-widest mb-4 border border-white/30">Fast Delivery</span>
+          <h2 class="text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">Track Your <br><span class="text-emerald-300">Package</span></h2>
+          <p class="mt-4 text-emerald-50">Enter your order ID to see real-time delivery status.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pt-16 pb-24 bg-gray-100">
+<div class="max-w-3xl mx-auto px-6">
+  <div class="animate-fade-up">
+
+    <!-- READ: Search Order -->
+    <div class="flex gap-4 mb-12">
+      <input id="orderIdInput" class="flex-1 bg-gray-50 border border-slate-200 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-500 outline-none font-mono" placeholder="Order ID (e.g. #ML-10492)">
+      <button onclick="trackOrder()" class="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-emerald-500 transition shadow-xl">
+        Track Now
+      </button>
+    </div>
+
+    <!-- READ: Order Result Card -->
+    <div id="statusResult" class="hidden space-y-6">
+      <div class="bg-gray-50 rounded-[2.5rem] p-10 shadow-xl border border-slate-100">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p class="text-xs text-slate-400 uppercase font-black tracking-widest mb-1">Order ID</p>
+            <h3 id="displayOrderId" class="text-xl font-black text-slate-800"></h3>
+          </div>
+          <div class="text-right">
+            <p class="text-xs text-slate-400 uppercase font-black tracking-widest mb-1">Total</p>
+            <p id="displayTotal" class="font-bold text-emerald-600"></p>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-start mb-8">
+          <div>
+            <p class="text-xs text-slate-400 uppercase font-black tracking-widest mb-1">Status</p>
+            <h3 id="orderStatusText" class="text-3xl font-black text-emerald-600"></h3>
+          </div>
+          <div class="text-right">
+            <p class="text-xs text-slate-400 uppercase font-black tracking-widest mb-1">Order Date</p>
+            <p id="displayDate" class="font-bold"></p>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="relative py-8">
+          <div class="absolute inset-0 flex items-center px-4">
+            <div class="w-full h-1.5 bg-slate-100 rounded-full">
+              <div id="progressFill" class="h-full bg-emerald-500 rounded-full transition-all duration-1000 w-1/4"></div>
+            </div>
+          </div>
+          <div class="relative flex justify-between">
+            <div class="text-center">
+              <div class="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center font-bold mx-auto ring-4 ring-white z-10 relative">✓</div>
+              <p class="mt-2 text-xs font-bold">Ordered</p>
+            </div>
+            <div class="text-center">
+              <div id="step2Icon" class="w-10 h-10 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center font-bold mx-auto ring-4 ring-white z-10 relative transition">2</div>
+              <p class="mt-2 text-xs font-bold text-slate-400" id="step2Label">Processing</p>
+            </div>
+            <div class="text-center">
+              <div id="step3Icon" class="w-10 h-10 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center font-bold mx-auto ring-4 ring-white z-10 relative transition">3</div>
+              <p class="mt-2 text-xs font-bold text-slate-400">Shipped</p>
+            </div>
+            <div class="text-center">
+              <div id="step4Icon" class="w-10 h-10 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center font-bold mx-auto ring-4 ring-white z-10 relative transition">4</div>
+              <p class="mt-2 text-xs font-bold text-slate-400">Delivered</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Address -->
+        <div class="bg-gray-100 rounded-2xl px-6 py-4 mb-6">
+          <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Delivery Address</p>
+          <p id="displayAddress" class="text-sm font-medium text-slate-700"></p>
+        </div>
+
+        <!-- Order Items -->
+        <div id="orderItems" class="border-t border-slate-100 pt-6 space-y-3"></div>
+
+        <!-- UPDATE & DELETE Actions (pending orders only) -->
+        <div id="orderActions" class="hidden mt-6 pt-6 border-t border-slate-100 flex gap-3 flex-wrap">
+          <!-- UPDATE - Address change -->
+          <button onclick="openUpdateAddress()" id="updateAddressBtn"
+            class="flex-1 py-3 text-sm font-bold border border-slate-200 rounded-xl hover:bg-slate-100 transition">
+            ✏️ Update Address
+          </button>
+          <!-- DELETE - Cancel order -->
+          <button onclick="cancelCurrentOrder()" id="cancelOrderBtn"
+            class="flex-1 py-3 text-sm font-bold bg-rose-50 text-rose-600 border border-rose-200 rounded-xl hover:bg-rose-100 transition">
+            ✕ Cancel Order
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Not Found -->
+    <div id="noOrder" class="hidden text-center py-20 bg-gray-50 rounded-[2.5rem] border border-dashed border-slate-200">
+      <div class="text-5xl mb-3">🔍</div>
+      <p class="text-slate-400 font-bold">No order found with this ID.</p>
+      <p class="text-slate-400 text-sm mt-1">Please check the order ID and try again.</p>
+    </div>
+
+    <!-- READ: My Orders List -->
+    <div id="myOrdersSection" class="hidden mt-12">
+      <h3 class="text-2xl font-extrabold mb-6">My <span class="text-emerald-500">Orders</span></h3>
+      <div id="myOrdersList" class="space-y-4"></div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- UPDATE: Address Modal -->
+<div id="updateAddressModal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
+    <h3 class="text-xl font-extrabold mb-1">✏️ Update Delivery Address</h3>
+    <p class="text-sm text-slate-500 mb-5">Only pending orders can be updated.</p>
+    <textarea id="newAddressInput" rows="4"
+      class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition resize-none text-sm mb-4"
+      placeholder="Enter new address..."></textarea>
+    <div class="flex gap-3">
+      <button onclick="submitAddressUpdate()"
+        class="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition">
+        Save
+      </button>
+      <button onclick="document.getElementById('updateAddressModal').classList.add('hidden')"
+        class="flex-1 py-3 border border-slate-200 rounded-xl font-semibold hover:bg-slate-50 transition">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Current tracked order
+  let currentOrder = null;
+
+  // ============================================================
+  // READ - Order Track කිරීම (by order ID)
+  // ============================================================
+  async function trackOrder() {
+    const id = document.getElementById('orderIdInput').value.trim();
+    if (!id) return showToast('Please enter an Order ID', false);
+
+    const result = document.getElementById('statusResult');
+    const noOrder = document.getElementById('noOrder');
+
+    try {
+      const res = await fetch('/api/orders/track/' + encodeURIComponent(id));
+      if (res.ok) {
+        currentOrder = await res.json();
+        result.classList.remove('hidden');
+        noOrder.classList.add('hidden');
+        displayOrder(currentOrder);
+      } else {
+        result.classList.add('hidden');
+        noOrder.classList.remove('hidden');
+        currentOrder = null;
+      }
+    } catch(e) {
+      showToast('Error connecting to server', false);
+    }
+  }
+
+  function displayOrder(order) {
+    document.getElementById('displayOrderId').innerText = order.orderId;
+    document.getElementById('displayTotal').innerText = 'Rs. ' + parseFloat(order.total).toLocaleString();
+    document.getElementById('displayDate').innerText = order.orderDate ? order.orderDate.substring(0,10) : '';
+    document.getElementById('displayAddress').innerText = order.address || 'N/A';
+
+    const statusText = document.getElementById('orderStatusText');
+    const progressFill = document.getElementById('progressFill');
+    const step2 = document.getElementById('step2Icon');
+    const step3 = document.getElementById('step3Icon');
+    const step4 = document.getElementById('step4Icon');
+    const actionsDiv = document.getElementById('orderActions');
+
+    const activeClass = 'w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center font-bold mx-auto ring-4 ring-white z-10 relative';
+    const inactiveClass = 'w-10 h-10 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center font-bold mx-auto ring-4 ring-white z-10 relative transition';
+    const cancelClass = 'w-10 h-10 bg-rose-400 text-white rounded-full flex items-center justify-center font-bold mx-auto ring-4 ring-white z-10 relative';
+
+    // Status indicator
+    const statusColors = {
+      pending:    'text-amber-500',
+      processing: 'text-blue-500',
+      shipped:    'text-purple-600',
+      delivered:  'text-emerald-600',
+      cancelled:  'text-rose-500'
+    };
+    statusText.className = 'text-3xl font-black ' + (statusColors[order.status] || 'text-slate-700');
+    statusText.innerText = order.status.toUpperCase();
+
+    // Progress steps
+    if (order.status === 'cancelled') {
+      progressFill.style.width = '0%';
+      progressFill.className = 'h-full bg-rose-400 rounded-full transition-all duration-1000';
+      step2.className = cancelClass; step2.innerText = '✕';
+      step3.className = inactiveClass; step3.innerText = '3';
+      step4.className = inactiveClass; step4.innerText = '4';
+      actionsDiv.classList.add('hidden');
+    } else if (order.status === 'pending') {
+      progressFill.style.width = '15%';
+      progressFill.className = 'h-full bg-emerald-500 rounded-full transition-all duration-1000';
+      step2.className = inactiveClass; step2.innerText = '2';
+      step3.className = inactiveClass; step3.innerText = '3';
+      step4.className = inactiveClass; step4.innerText = '4';
+      // Show update/cancel buttons for logged-in user's pending orders
+      let user = JSON.parse(localStorage.getItem('medilux_user'));
+      if (user && order.userId === user.id) {
+        actionsDiv.classList.remove('hidden');
+      } else {
+        actionsDiv.classList.add('hidden');
+      }
+    } else if (order.status === 'processing') {
+      progressFill.style.width = '40%';
+      step2.className = activeClass; step2.innerText = '✓';
+      step3.className = inactiveClass; step3.innerText = '3';
+      step4.className = inactiveClass; step4.innerText = '4';
+      actionsDiv.classList.add('hidden');
+    } else if (order.status === 'shipped') {
+      progressFill.style.width = '70%';
+      step2.className = activeClass; step2.innerText = '✓';
+      step3.className = activeClass; step3.innerText = '✓';
+      step4.className = inactiveClass; step4.innerText = '4';
+      actionsDiv.classList.add('hidden');
+    } else if (order.status === 'delivered') {
+      progressFill.style.width = '100%';
+      step2.className = activeClass; step2.innerText = '✓';
+      step3.className = activeClass; step3.innerText = '✓';
+      step4.className = activeClass; step4.innerText = '✓';
+      actionsDiv.classList.add('hidden');
+    }
+
+    // Show ordered items
+    const itemsDiv = document.getElementById('orderItems');
+    try {
+      const items = JSON.parse(order.items);
+      if (items.length > 0) {
+        itemsDiv.innerHTML = `
+          <p class="text-xs text-slate-400 font-black uppercase tracking-widest mb-3">Ordered Items</p>
+          ${items.map(i => `
+            <div class="flex justify-between items-center text-sm py-2 border-b border-slate-50 last:border-0">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded overflow-hidden bg-gray-100 flex items-center justify-center">
+                  ${(i.icon && (i.icon.startsWith('http') || i.icon.startsWith('data:image'))) 
+                    ? `<img src="${i.icon}" class="w-full h-full object-cover">` 
+                    : `<span class="text-xl">${i.icon || '📦'}</span>`}
+                </div>
+                <span class="font-medium">${i.name}</span>
+                ${i.quantity > 1 ? `<span class="text-xs text-slate-400">x${i.quantity}</span>` : ''}
+              </div>
+              <span class="text-slate-600 font-semibold">Rs. ${parseFloat(i.price).toLocaleString()}</span>
+            </div>`).join('')}`;
+      } else {
+        itemsDiv.innerHTML = '';
+      }
+    } catch(e) {
+      itemsDiv.innerHTML = '';
+    }
+  }
+
+  // ============================================================
+  // UPDATE - Delivery Address Update
+  // ============================================================
+  function openUpdateAddress() {
+    if (!currentOrder) return;
+    document.getElementById('newAddressInput').value = currentOrder.address || '';
+    document.getElementById('updateAddressModal').classList.remove('hidden');
+  }
+
+  async function submitAddressUpdate() {
+    let user = JSON.parse(localStorage.getItem('medilux_user'));
+    if (!user || !currentOrder) return;
+
+    const newAddress = document.getElementById('newAddressInput').value.trim();
+    if (!newAddress) return showToast('Please enter a new address', false);
+
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(currentOrder.orderId)}/address`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, address: newAddress })
+      });
+
+      if (res.ok) {
+        document.getElementById('updateAddressModal').classList.add('hidden');
+        showToast('Address updated successfully ✅');
+        // Reload order to reflect change
+        document.getElementById('orderIdInput').value = currentOrder.orderId;
+        trackOrder();
+      } else {
+        const msg = await res.text();
+        showToast(msg, false);
+      }
+    } catch(e) {
+      showToast('Error: ' + e.message, false);
+    }
+  }
+
+  // ============================================================
+  // DELETE - Cancel Order
+  // ============================================================
+  async function cancelCurrentOrder() {
+    let user = JSON.parse(localStorage.getItem('medilux_user'));
+    if (!user || !currentOrder) return;
+    if (!confirm(`Cancel order ${currentOrder.orderId}? This cannot be undone.`)) return;
+
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(currentOrder.orderId)}/cancel`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id })
+      });
+
+      if (res.ok) {
+        showToast('Order cancelled successfully');
+        trackOrder(); // Refresh to show cancelled status
+        loadMyOrders(); // Refresh list
+      } else {
+        const msg = await res.text();
+        showToast(msg, false);
+      }
+    } catch(e) {
+      showToast('Error: ' + e.message, false);
+    }
+  }
+
+  // ============================================================
+  // READ - My Orders List (logged-in user)
+  // ============================================================
+  async function loadMyOrders() {
+    let user = JSON.parse(localStorage.getItem('medilux_user'));
+    if (!user) return;
+
+    try {
+      const res = await fetch('/api/orders/user/' + user.id);
+      if (!res.ok) return;
+      const orders = await res.json();
+
+      if (orders.length > 0) {
+        document.getElementById('myOrdersSection').classList.remove('hidden');
+        const list = document.getElementById('myOrdersList');
+        const statusColors = {
+          pending:    'bg-amber-100 text-amber-700',
+          processing: 'bg-blue-100 text-blue-700',
+          shipped:    'bg-purple-100 text-purple-700',
+          delivered:  'bg-emerald-100 text-emerald-700',
+          cancelled:  'bg-rose-100 text-rose-700'
+        };
+        list.innerHTML = orders.map(o => `
+          <div onclick="document.getElementById('orderIdInput').value='${o.orderId}'; trackOrder();"
+              class="bg-gray-50 rounded-2xl p-6 shadow-md border border-slate-100 cursor-pointer hover:shadow-lg hover:border-emerald-200 transition">
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="font-bold text-lg font-mono">${o.orderId}</p>
+                <p class="text-xs text-slate-400 mt-0.5">${o.orderDate ? o.orderDate.substring(0,10) : ''}</p>
+              </div>
+              <div class="text-right">
+                <p class="font-extrabold text-emerald-600">Rs. ${parseFloat(o.total).toLocaleString()}</p>
+                <span class="text-xs font-bold px-3 py-1 rounded-full ${statusColors[o.status] || 'bg-slate-100 text-slate-600'}">
+                  ${o.status?.toUpperCase()}
+                </span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 mt-3 truncate">📍 ${o.address}</p>
+          </div>`).join('');
+      }
+    } catch(e) { console.log(e); }
+  }
+
+  // Auth
+  function setupAuth() {
+    let user = JSON.parse(localStorage.getItem('medilux_user'));
+    const btn = document.getElementById('authBtn');
+    if (user && btn) {
+      btn.innerText = user.name;
+      btn.href = '#';
+      btn.onclick = function(e) {
+        e.preventDefault();
+        if (confirm('Do you want to logout?')) {
+          localStorage.removeItem('medilux_user');
+          window.location.reload();
+        }
+      };
+      btn.classList.add('bg-emerald-500','text-white','border-emerald-500');
+    }
+  }
+
+  function updateBadge() {
+    let cart = JSON.parse(localStorage.getItem('medilux_cart')) || [];
+    const badge = document.getElementById('cartBadge');
+    const total = cart.reduce((s, p) => s + (p.quantity || 1), 0);
+    if (badge) {
+      badge.innerText = total;
+      if (total > 0) badge.classList.remove('hidden');
+      else badge.classList.add('hidden');
+    }
+  }
+
+  function showToast(message, isSuccess = true) {
+    const existing = document.getElementById('medilux-toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'medilux-toast';
+    toast.className = `fixed top-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 text-white font-bold transition-all duration-500 transform translate-y-[-100%] opacity-0 ${isSuccess ? 'bg-slate-900' : 'bg-rose-500'}`;
+    toast.innerHTML = `<span>${isSuccess ? '✅' : '❌'}</span><span>${message}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.classList.remove('translate-y-[-100%]','opacity-0'); toast.classList.add('translate-y-0','opacity-100'); }, 10);
+    setTimeout(() => { toast.classList.remove('translate-y-0','opacity-100'); toast.classList.add('translate-y-[-100%]','opacity-0'); setTimeout(() => toast.remove(), 500); }, 3000);
+  }
+
+  window.onload = () => {
+    setupAuth();
+    updateBadge();
+    loadMyOrders();
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id) {
+      document.getElementById('orderIdInput').value = id;
+      trackOrder();
+    }
+  };
+</script>
+
+</body>
+</html>
