@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us | MediLux Pharmacy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','sans-serif'] }, animation: { 'fade-up': 'fadeUp 0.8s ease forwards' }, keyframes: { fadeUp: { '0%': {opacity:'0', transform:'translateY(20px)'}, '100%': {opacity:'1', transform:'translateY(0px)'} } } } } }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-slate-900">
+
+<!-- Navbar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-gray-50/80 backdrop-blur-xl border-b border-slate-200">
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<div class="h-20 flex items-center justify-between">
+<a href="index.html" class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold">✚</div>
+<div><h1 class="font-extrabold text-xl">MediLux</h1></div>
+</a>
+<nav class="hidden lg:flex gap-10 text-sm font-medium text-slate-600">
+<a href="index.html" class="hover:text-emerald-600">Home</a>
+<a href="products.html" class="hover:text-emerald-600 transition">Products</a>
+<a href="track-order.html" class="hover:text-emerald-600 transition">Track Order</a>
+<a href="about.html" class="text-emerald-600 font-bold transition">About</a>
+<a href="contact.html" class="hover:text-emerald-600 transition">Contact</a>
+</nav>
+<a href="index.html" class="px-5 py-2.5 rounded-full border border-slate-300 hover:bg-slate-100 transition text-sm font-semibold">Join Us</a>
+</div>
+</div>
+</header>
+
+<!-- Hero Banner -->
+<section class="pt-20 pb-0 bg-gray-50 relative">
+    <div class="w-full h-[400px] relative overflow-hidden">
+        <img src="images/about_banner.png" class="absolute inset-0 w-full h-full object-cover scale-105" alt="About Us">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-center">
+            <div class="max-w-3xl px-6 animate-fade-up">
+                <span class="px-4 py-2 bg-emerald-500/20 text-emerald-300 rounded-full text-sm font-bold uppercase tracking-wider border border-emerald-500/30">Our Journey</span>
+                <h2 class="mt-6 text-5xl lg:text-7xl font-extrabold leading-tight text-white">Better Health for a <br><span class="text-emerald-400">Better Tomorrow</span></h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pt-24 pb-24 bg-gray-100">
+<div class="max-w-5xl mx-auto px-6 text-center animate-fade-up">
+    
+    <div class="mt-16 grid md:grid-cols-2 gap-8 text-left">
+        <div class="bg-gray-50 p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
+            <h3 class="text-2xl font-bold mb-4">Our Mission</h3>
+            <p class="text-slate-500 leading-8">MediLux Pharmacy is dedicated to transforming the way you access healthcare. We combine modern technology with trusted medical expertise to deliver wellness straight to your doorstep.</p>
+        </div>
+        <div class="bg-emerald-500 p-10 rounded-[2.5rem] shadow-xl text-white">
+            <h3 class="text-2xl font-bold mb-4">Why We Care</h3>
+            <p class="opacity-90 leading-8">Because health is your greatest wealth. We focus on quality-approved products, fast delivery, and 24/7 expert support to ensure you never have to worry about your family's safety.</p>
+        </div>
+    </div>
+
+    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-gray-50 p-6 rounded-3xl border border-slate-100">
+            <p class="text-3xl font-extrabold text-emerald-500">10k+</p>
+            <p class="text-sm text-slate-500 font-semibold mt-1">Happy Customers</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-3xl border border-slate-100">
+            <p class="text-3xl font-extrabold text-emerald-500">24/7</p>
+            <p class="text-sm text-slate-500 font-semibold mt-1">Expert Support</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-3xl border border-slate-100">
+            <p class="text-3xl font-extrabold text-emerald-500">100%</p>
+            <p class="text-sm text-slate-500 font-semibold mt-1">Genuine Care</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-3xl border border-slate-100">
+            <p class="text-3xl font-extrabold text-emerald-500">30m</p>
+            <p class="text-sm text-slate-500 font-semibold mt-1">Avg Delivery</p>
+        </div>
+    </div>
+
+</div>
+</section>
+
+</body>
+</html>
